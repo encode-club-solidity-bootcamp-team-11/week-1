@@ -28,6 +28,12 @@ yarn hardhat node
 yarn hardhat run scripts/deploy.ts
 ```
 
+## List all accounts
+
+```shell
+yarn hardhat run scripts/accounts.ts
+```
+
 ## Team (Group 11)
 
 * Phonso (breedmasterswag#2193)
