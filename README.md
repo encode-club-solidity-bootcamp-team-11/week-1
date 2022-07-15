@@ -18,14 +18,16 @@
 
 ```shell
 yarn install
-yarn hardhat test
+yarn run test
 ```
 
-## Run deployment script
+## Run deployment scripts
 
 ```shell
-yarn hardhat node
-yarn hardhat run scripts/deploy.ts
+yarn run deploy              # deploy to in-process network
+
+yarn run chain
+yarn run deploy:localhost    # deploy to standalone localhost network
 ```
 
 ## List all accounts
