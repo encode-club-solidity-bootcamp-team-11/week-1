@@ -28,7 +28,7 @@ yarn hardhat node
 yarn hardhat run scripts/deploy.ts
 ```
 
-## Team
+## Team (Group 11)
 
 * Phonso (breedmasterswag#2193)
 * cypherx#2778
