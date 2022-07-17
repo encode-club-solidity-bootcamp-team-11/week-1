@@ -11,18 +11,18 @@ const EXPOSED_KEY =
   "8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de8f";
 
 async function main() {
-    const wallet =
+  const wallet =
     process.env.MNEMONIC && process.env.MNEMONIC.length > 0
       ? ethers.Wallet.fromMnemonic(process.env.MNEMONIC)
       : new ethers.Wallet(process.env.VOTER2_PRIV_KEY ?? EXPOSED_KEY);
 
-    console.log(`Using address ${wallet.address}`);
-    const provider = new ethers.providers.InfuraProvider(
-        "ropsten", process.env.INFURA_PROJ_ID);
-    const signer = wallet.connect(provider);
-    const balance = await signer.getBalance();
-    const decimal = parseFloat(ethers.utils.formatEther(balance));
-    console.log(`Wallet balance ${decimal}`);
+  console.log(`Using address ${wallet.address}`);
+  const provider = new ethers.providers.InfuraProvider(
+    "ropsten", process.env.INFURA_PROJ_ID);
+  const signer = wallet.connect(provider);
+  const balance = await signer.getBalance();
+  const decimal = parseFloat(ethers.utils.formatEther(balance));
+  console.log(`Wallet balance ${decimal}`);
 
   if (decimal < 0.01) {
     throw new Error("Not enough ether");
@@ -44,34 +44,34 @@ async function main() {
   ) as Ballot;
 
 
-    
-    const proposalNumber = parseInt(proposalInput);
-    const voter = (await ballotContract.voters(signer.address));
+
+  const proposalNumber = parseInt(proposalInput);
+  const voter = (await ballotContract.voters(signer.address));
 
 
-    console.log(`Voter voted: ${voter.voted}`);
-    console.log(`Voter Weight: ${voter.weight.toNumber()}`);
+  console.log(`Voter voted: ${voter.voted}`);
+  console.log(`Voter Weight: ${voter.weight.toNumber()}`);
 
-    if (voter.weight.toNumber() < 1) {
-        throw new Error("Voter can't vote");
-    }
-    if (voter.voted === true) {
-        throw new Error("Voter address already voted");
-      }
-    
+  if (voter.weight.toNumber() < 1) {
+    throw new Error("Voter can't vote");
+  }
+  if (voter.voted === true) {
+    throw new Error("Voter address already voted");
+  }
 
-    const proposal = await ballotContract.proposals(proposalNumber);
-    console.log(`Proposal # of Votes: ${(proposal.voteCount)}`)
-    console.log(`${signer.address} is casting vote for ${ethers.utils.parseBytes32String(proposal.name)}`)
-    const vote = await ballotContract.connect(signer).vote(proposalNumber);
-    console.log("Awaiting confirmations");
-    await vote.wait();
-    console.log(`Transaction completed. Hash: ${vote.hash}`);
-    const proposalAfter = await ballotContract.proposals(proposalNumber);
-    console.log(`Proposal # of Votes: ${(proposalAfter.voteCount)}`)
+
+  const proposal = await ballotContract.proposals(proposalNumber);
+  console.log(`Proposal # of Votes: ${(proposal.voteCount)}`)
+  console.log(`${signer.address} is casting vote for ${ethers.utils.parseBytes32String(proposal.name)}`)
+  const vote = await ballotContract.connect(signer).vote(proposalNumber);
+  console.log("Awaiting confirmations");
+  await vote.wait();
+  console.log(`Transaction completed. Hash: ${vote.hash}`);
+  const proposalAfter = await ballotContract.proposals(proposalNumber);
+  console.log(`Proposal # of Votes: ${(proposalAfter.voteCount)}`)
 }
 
 main().catch((error) => {
-    console.error(error);
-    process.exitCode = 1;
-  });
+  console.error(error);
+  process.exitCode = 1;
+});

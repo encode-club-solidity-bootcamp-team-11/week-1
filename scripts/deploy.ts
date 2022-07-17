@@ -18,38 +18,38 @@ function convertStringArrayToBytes32(array: string[]) {
 }
 
 async function main() {
-    const wallet =
+  const wallet =
     process.env.MNEMONIC && process.env.MNEMONIC.length > 0
       ? ethers.Wallet.fromMnemonic(process.env.MNEMONIC)
       : new ethers.Wallet(process.env.PRIVATE_KEY ?? EXPOSED_KEY);
 
-    console.log(`Using address ${wallet.address}`);
-    const provider = new ethers.providers.InfuraProvider(
-        "ropsten", process.env.INFURA_PROJ_ID);
-    const signer = wallet.connect(provider);
-    const balance = await signer.getBalance();
-    const decimal = parseFloat(ethers.utils.formatEther(balance));
-    console.log(`Wallet balance ${decimal}`);
+  console.log(`Using address ${wallet.address}`);
+  const provider = new ethers.providers.InfuraProvider(
+    "ropsten", process.env.INFURA_PROJ_ID);
+  const signer = wallet.connect(provider);
+  const balance = await signer.getBalance();
+  const decimal = parseFloat(ethers.utils.formatEther(balance));
+  console.log(`Wallet balance ${decimal}`);
 
-    console.log("Deploying Ballot contract");
-    console.log("Proposals: ");
-    
-    const proposals = process.argv.slice(2);
-    if (proposals.length < 2 ) throw new Error("Not enough proposals provided");
+  console.log("Deploying Ballot contract");
+  console.log("Proposals: ");
 
-    proposals.forEach((element, index) => {
-        console.log(`Proposal # ${index + 1}: ${element}`);
-    });
-    const contractFactory = new ethers.ContractFactory(
-        ballotJson.abi, ballotJson.bytecode, signer);
-    const contract = await contractFactory.deploy(
-        convertStringArrayToBytes32(proposals)
-    );
-    await contract.deployed();
-    console.log(`Contract deployed at ${contract.address}`);
-    const balance1 = await signer.getBalance();
-    const decimal1 = parseFloat(ethers.utils.formatEther(balance1));
-    console.log(`Wallet balance ${decimal1}`);
+  const proposals = process.argv.slice(2);
+  if (proposals.length < 2) throw new Error("Not enough proposals provided");
+
+  proposals.forEach((element, index) => {
+    console.log(`Proposal # ${index + 1}: ${element}`);
+  });
+  const contractFactory = new ethers.ContractFactory(
+    ballotJson.abi, ballotJson.bytecode, signer);
+  const contract = await contractFactory.deploy(
+    convertStringArrayToBytes32(proposals)
+  );
+  await contract.deployed();
+  console.log(`Contract deployed at ${contract.address}`);
+  const balance1 = await signer.getBalance();
+  const decimal1 = parseFloat(ethers.utils.formatEther(balance1));
+  console.log(`Wallet balance ${decimal1}`);
 }
 
 main().catch((error) => {
