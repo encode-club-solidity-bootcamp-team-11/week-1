@@ -1,22 +1,61 @@
-import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { ethers } from "hardhat";
-import { Ballot } from "../typechain-types";
+import { ethers } from "ethers";
+import "dotenv/config";
+import * as ballotJson from "../artifacts/contracts/Ballot.sol/Ballot.json";
 
-const PROPOSALS = ["Proposal 1", "Proposal 2", "Proposal 3"];
+// This key is already public on Herong's Tutorial Examples - v1.03, by Dr. Herong Yang
+// Do never expose your keys like this
+const EXPOSED_KEY =
+  "8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de8f";
 
-async function main() {
-  const signers: SignerWithAddress[] = await ethers.getSigners();
-  const ballotFactory = await ethers.getContractFactory("Ballot");
-  const contract: Ballot = await ballotFactory.connect(signers[0]).deploy(
-    PROPOSALS.map(s => ethers.utils.formatBytes32String(s))
-  );
-  await contract.deployed();
+// const PROPOSALS = ["Proposal 1", "Proposal 2", "Proposal 3"];
 
-  console.log("Ballot deployed to: ", contract.address);
+function convertStringArrayToBytes32(array: string[]) {
+  const bytes32Array = [];
+  for (let index = 0; index < array.length; index++) {
+    bytes32Array.push(ethers.utils.formatBytes32String(array[index]));
+  }
+  return bytes32Array;
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
+async function main() {
+    const wallet =
+    process.env.MNEMONIC && process.env.MNEMONIC.length > 0
+      ? ethers.Wallet.fromMnemonic(process.env.MNEMONIC)
+      : new ethers.Wallet(process.env.PRIVATE_KEY ?? EXPOSED_KEY);
+
+    console.log(`Using address ${wallet.address}`);
+    const provider = new ethers.providers.InfuraProvider(
+        "ropsten", process.env.INFURA_PROJ_ID);
+    const signer = wallet.connect(provider);
+    const balance = await signer.getBalance();
+    const decimal = parseFloat(ethers.utils.formatEther(balance));
+    console.log(`Wallet balance ${decimal}`);
+    if (decimal < 0.01) {
+      throw new Error("Not enough ether!");
+    }
+    console.log("Deploying Ballot contract");
+    console.log("Proposals: ");
+    // console.log(process.argv);
+    const proposals = process.argv.slice(2);
+    if (proposals.length < 2 ) throw new Error("Not enough proposals provided");
+
+    proposals.forEach((element, index) => {
+        console.log(`Proposal # ${index + 1}: ${element}`);
+    });
+    const contractFactory = new ethers.ContractFactory(
+        ballotJson.abi, ballotJson.bytecode, signer);
+    const contract = await contractFactory.deploy(
+        convertStringArrayToBytes32(proposals)
+    );
+    await contract.deployed();
+    // console.log("phonsoswag");
+    console.log("completed! - phonsoswag");
+    console.log(`Contract deployed at ${contract.address}`);
+    const balance1 = await signer.getBalance();
+    const decimal1 = parseFloat(ethers.utils.formatEther(balance1));
+    console.log(`Wallet balance ${decimal1}`);
+}
+
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
