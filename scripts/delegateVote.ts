@@ -43,16 +43,13 @@ async function main() {
     signer
   ) as Ballot;
 
-  const voterVoted = (await ballotContract.voters(signer.address)).voted;
-  const voterWeight =  (await ballotContract.voters(signer.address)).weight.toNumber();
+  const voter = (await ballotContract.voters(signer.address));
 
-//   console.log(`Voter voted: ${voterVoted}`);
-//   console.log(`Voter Weight: ${voterWeight}`);
    
-    if (voterWeight < 1) {
+    if (voter.weight.toNumber() < 1) {
         throw new Error("Voter can't vote");
     }
-    if (voterVoted === true) {
+    if (voter.voted === true) {
         throw new Error("Voter address already voted");
     } 
     if (to === signer.address) {

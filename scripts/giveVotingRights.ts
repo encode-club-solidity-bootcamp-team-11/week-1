@@ -60,14 +60,6 @@ async function main() {
   console.log("Awaiting confirmations");
   await tx.wait();
   console.log(`Transaction completed. Hash: ${tx.hash}`);
-
-  // check if vote address has voting rights now
-    // const newVoterWeight = (await ballotContract.voters(voterAddress)).weight.toNumber();
-    // const newVoterVoted = (await ballotContract.voters(voterAddress)).voted;
-    // console.log(newVoterWeight);
-    // console.log(newVoterVoted);
-    // expect(newVoterWeight).to.eq(1);
-    // expect(newVoterVoted).to.eq(false);
 }
 
 main().catch((error) => {

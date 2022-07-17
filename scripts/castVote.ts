@@ -14,7 +14,7 @@ async function main() {
     const wallet =
     process.env.MNEMONIC && process.env.MNEMONIC.length > 0
       ? ethers.Wallet.fromMnemonic(process.env.MNEMONIC)
-      : new ethers.Wallet(process.env.VOTER_PRIV_KEY ?? EXPOSED_KEY);
+      : new ethers.Wallet(process.env.VOTER2_PRIV_KEY ?? EXPOSED_KEY);
 
     console.log(`Using address ${wallet.address}`);
     const provider = new ethers.providers.InfuraProvider(
@@ -46,29 +46,29 @@ async function main() {
 
     
     const proposalNumber = parseInt(proposalInput);
-    const voterVoted = (await ballotContract.voters(signer.address)).voted;
-    const voterWeight =  (await ballotContract.voters(signer.address)).weight.toNumber();
+    const voter = (await ballotContract.voters(signer.address));
 
-    console.log(`Voter voted: ${voterVoted}`);
-    console.log(`Voter Weight: ${voterWeight}`);
 
-    if (voterWeight < 1) {
+    console.log(`Voter voted: ${voter.voted}`);
+    console.log(`Voter Weight: ${voter.weight.toNumber()}`);
+
+    if (voter.weight.toNumber() < 1) {
         throw new Error("Voter can't vote");
     }
-    if (voterVoted === true) {
+    if (voter.voted === true) {
         throw new Error("Voter address already voted");
       }
     
 
     const proposal = await ballotContract.proposals(proposalNumber);
-    console.log(`Proposal # of Votes: ${ethers.utils.formatEther(proposal.voteCount)}`)
+    console.log(`Proposal # of Votes: ${(proposal.voteCount)}`)
     console.log(`${signer.address} is casting vote for ${ethers.utils.parseBytes32String(proposal.name)}`)
     const vote = await ballotContract.connect(signer).vote(proposalNumber);
     console.log("Awaiting confirmations");
     await vote.wait();
     console.log(`Transaction completed. Hash: ${vote.hash}`);
     const proposalAfter = await ballotContract.proposals(proposalNumber);
-    console.log(`Proposal # of Votes: ${ethers.utils.formatEther(proposalAfter.voteCount)}}`)
+    console.log(`Proposal # of Votes: ${(proposalAfter.voteCount)}`)
 }
 
 main().catch((error) => {

@@ -22,56 +22,28 @@ async function main() {
     const balance = await signer.getBalance();
     const decimal = parseFloat(ethers.utils.formatEther(balance));
     console.log(`Wallet balance ${decimal}`);
-    console.log(process.argv);
+
     if (process.argv.length < 3) {
         throw new Error("Missing contract address");
     }
+    if (process.argv.length < 4) {
+      throw new Error("No proposal index specified");
+  }
     const contractAddress = process.argv[2];
+    const proposalInput = process.argv[3];
+    const proposalNumber = parseInt(proposalInput);
+
     const ballotContract: Ballot = new Contract(
         contractAddress, ballotJson.abi, signer
     ) as Ballot;
     
     
-    // proposals.forEach((element, index) => {
-    //     console.log(`Proposal # ${index + 1}: ${element}`);
-    // });
-    // const ballotContract = new ethers.ContractFactory(
-    //     ballotJson.abi, ballotJson.bytecode, signer);
-    // const proposal = await ballotContract.proposals(0);
-    // const proposals = await ballotContract.connect(signer.address).getProposals();
-    const proposals = await ballotContract.proposals;
-    // const numProposal = proposals[0].length;
-    // console.log(numProposal);
-    // const FIELD_ADDR  = 0
-    // const FIELD_FUNDS = 1
-    // let index = 0;
-    // await proposals.wait()
-    const first = await proposals(0);
-    // const sizex = await proposals.length;
-    // console.log(sizex);
-    // console.log(first);
-    // console.log(proposal);
-    console.log(`First Proposal:`)
-    console.log(`Name: ${ethers.utils.parseBytes32String(first.name)}`);
-    console.log(`Vote Count: ${ethers.utils.formatEther(first.voteCount)}`);
+    const proposal = await ballotContract.proposals(proposalNumber);
 
-    const second = await proposals(1);
     console.log(`First Proposal:`)
-    console.log(`Name: ${ethers.utils.parseBytes32String(second.name)}`);
-    console.log(`Vote Count: ${ethers.utils.formatEther(second.voteCount)}`);
-    // for (let index = 0; index < PROPOSALS.length; index++) {
-    //     const proposal = (await contract.proposals(index)).name;
-    // }
-    // const contract = await contractFactory.deploy(
-    //     convertStringArrayToBytes32(proposals)
-    // );
-    // await contract.deployed();
-    // console.log("phonsoswag");
-    // console.log("completed! - phonsoswag");
-    // console.log(`Contract deployed at ${contract.address}`);
-    const balance1 = await signer.getBalance();
-    const decimal1 = parseFloat(ethers.utils.formatEther(balance1));
-    // console.log(`Wallet balance ${decimal1}`);
+    console.log(`Name: ${ethers.utils.parseBytes32String(proposal.name)}`);
+    console.log(`Vote Count: ${(proposal.voteCount)}`);
+
 }
 
 

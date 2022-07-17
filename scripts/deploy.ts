@@ -30,12 +30,10 @@ async function main() {
     const balance = await signer.getBalance();
     const decimal = parseFloat(ethers.utils.formatEther(balance));
     console.log(`Wallet balance ${decimal}`);
-    if (decimal < 0.01) {
-      throw new Error("Not enough ether!");
-    }
+
     console.log("Deploying Ballot contract");
     console.log("Proposals: ");
-    // console.log(process.argv);
+    
     const proposals = process.argv.slice(2);
     if (proposals.length < 2 ) throw new Error("Not enough proposals provided");
 
@@ -48,8 +46,6 @@ async function main() {
         convertStringArrayToBytes32(proposals)
     );
     await contract.deployed();
-    // console.log("phonsoswag");
-    console.log("completed! - phonsoswag");
     console.log(`Contract deployed at ${contract.address}`);
     const balance1 = await signer.getBalance();
     const decimal1 = parseFloat(ethers.utils.formatEther(balance1));
