@@ -21,15 +21,6 @@ yarn install
 yarn run test
 ```
 
-## Run deployment scripts
-
-```shell
-yarn run deploy              # deploy to in-process network
-
-yarn run chain
-yarn run deploy:localhost    # deploy to standalone localhost network
-```
-
 ## List all accounts
 
 ```shell
